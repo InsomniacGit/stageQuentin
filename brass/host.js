@@ -10,14 +10,16 @@ const audioContext = new AudioContext();
 const mediaElementSource = audioContext.createMediaElementSource(player);
 
 // Very simple function to connect the plugin audionode to the host
-const connectPlugin = (audioNode) => {
-	mediaElementSource.connect(audioNode);
-	audioNode.connect(audioContext.destination);
+const connectPlugin = (instrument, keyboard) => {
+	keyboard.audioNode.connectEvents(instrument.instanceId);
+
+	instrument.audioNode.connect(audioContext.destination);
 };
 
 // Very simple function to append the plugin root dom node to the host
-const mountPlugin = (domNode) => {
+const mountPlugin = (domNode, keyboard) => {
 	mount.innerHtml = '';
+	mount.appendChild(keyboard);
 	mount.appendChild(domNode);
 };
 
@@ -28,20 +30,24 @@ const mountPlugin = (domNode) => {
 
 	// Import WAM
 	const { default: WAM } = await import('./index.js');
+	const { default:keyboardWAM}  = await import('https://mainline.i3s.unice.fr/wam2/packages/simpleMidiKeyboard/index.js');
+
 	// Create a new instance of the plugin
 	// You can can optionnally give more options such as the initial state of the plugin
-	const instance = await WAM.createInstance(hostGroupId, audioContext);
+	const instanceInstrument = await WAM.createInstance(hostGroupId, audioContext);
+	const instanceClavier = await keyboardWAM.createInstance(hostGroupId, audioContext);
 
-	window.instance = instance;
+	window.instanceInstrument = instanceInstrument;
 
 	// Connect the audionode to the host
-	connectPlugin(instance.audioNode);
+	connectPlugin(instanceInstrument, instanceClavier);
 
 	// Load the GUI if need (ie. if the option noGui was set to true)
 	// And calls the method createElement of the Gui module
-	const pluginDomNode = await instance.createGui();
+	const pluginDomNode = await instanceInstrument.createGui();
+	const keyboardGui = await instanceClavier.createGui();
 
-	mountPlugin(pluginDomNode);
+	mountPlugin(pluginDomNode, keyboardGui);
 
 	player.onplay = () => {
 		audioContext.resume(); // audio context must be resumed because browser restrictions
