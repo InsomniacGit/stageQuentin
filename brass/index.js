@@ -18,7 +18,10 @@
 */
           setup(output, paramMgr) {
             output.connect(this, 0, 0);
-            paramMgr.addEventListener('wam-midi', (e) => output.midiMessage(e.detail.data.bytes));
+            paramMgr.addEventListener('wam-midi', (e) => {
+              output.midiMessage(e.detail.data.bytes);
+            });
+            
             this._wamNode = paramMgr;
             this._output = output;
           }
