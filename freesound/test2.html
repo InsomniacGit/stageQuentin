@@ -1,0 +1,65 @@
+<script>
+  // Set API endpoint and parameters
+  const apiUrl = 'https://freesound.org/apiv2';
+  const apiKey = 'gWrbi0mUOoh7gaZgxp1Eh5rXB1hZ4UKZ2AnV8nqo';
+  const audioContext = new AudioContext();
+
+  async function getSoundAsArrayBuffer(id) {
+    const url = `${apiUrl}/sounds/${id}/?token=${apiKey}`;
+    const response = await fetch(url);
+    const data = await response.json();
+    console.log(data)
+    // get URL of preview audio file
+    const previewUrl = data.previews['preview-hq-mp3'];
+
+    // fetch URL and decode it with webaudio api
+    response2 = await fetch(previewUrl);
+    const arrayBuffer = await response2.arrayBuffer();
+    const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+    return audioBuffer;
+  }
+
+  function getAllSoundsArrayBuffersAsPromises(arrayOfSoundIds) {
+    const promises = arrayOfSoundIds.map(id => getSoundAsArrayBuffer(id));
+    return Promise.all(promises);
+  }
+
+  async function test() {
+    //const arrayOfSoundIds = ['1234', '5678', '91011'];
+    const arrayOfSoundIds = await getSounds('dog');
+
+    const arrayOfAudioBuffers = await getAllSoundsArrayBuffersAsPromises(arrayOfSoundIds);
+    // create an html button to play each sound
+    const playButtons = document.getElementById('playButtons');
+    arrayOfAudioBuffers.forEach((audioBuffer, index) => {
+      const button = document.createElement('button');
+      button.innerHTML = `Play sound ${arrayOfSoundIds[index]}`;
+      
+      // play sound when button is clicked
+      button.addEventListener('click', () => {
+        const source = audioContext.createBufferSource();
+        source.buffer = audioBuffer;
+        source.connect(audioContext.destination);
+        source.start();
+      });
+      playButtons.appendChild(button);
+    });
+
+    async function getSounds(queryText) {
+      // get a list of sounds from freesound
+      const url = `${apiUrl}/search/text/?query=${queryText}&token=${apiKey}`;
+      // get ids of each sound
+      const response = await fetch(url);
+      const data = await response.json();
+      const arrayOfSoundIds = data.results.map(sound => sound.id);
+      return arrayOfSoundIds;
+    }
+  }
+
+</script>
+<html>
+  <button onclick="test()">Test</button>
+<div id="playButtons">
+</div>
+
+</html>

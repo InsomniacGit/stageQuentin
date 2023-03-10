@@ -1,0 +1,53 @@
+<html>
+    <head>
+        <title>Loading a sound from freesound</title>
+        <script src="freesound.js"></script>
+<script>
+    function init() {
+        // initialize freesound API key
+        freesound.setToken("gWrbi0mUOoh7gaZgxp1Eh5rXB1hZ4UKZ2AnV8nqo");
+        // load sound with id=1234
+        freesound.getSound(1234, function(sound) {
+            // display sound info
+            var msg = "";
+            msg = "<h3>Getting info of sound: " + sound.name + "</h3>";
+            msg += "<strong>Url:</strong> " + sound.url + "<br>";
+            msg += "<strong>Description:</strong> " + sound.description + "<br>";
+            msg += "<strong>Tags:</strong><ul>";
+            for (i in sound.tags){
+                msg += "<li>" + sound.tags[i] + "</li>";
+            }
+            msg += "</ul><br>";
+            msg += "<img src='" + sound.images.waveform_l + "'>";
+            snd = new Audio(sound.previews['preview-hq-mp3']);
+            msg += '<br><button onclick="snd.play()">play</button><button onclick="snd.pause()">pause</button><br><br>';
+            displayMessage(msg,'resp1');
+
+            // decode full length snd with webaudio api and play it
+            sound.getAudioBuffer(function(buffer) {
+                var context = new AudioContext();
+                var source = context.createBufferSource();
+                source.buffer = buffer;
+                source.connect(context.destination);
+                // pkay it
+                source.start(0);
+            }, function(){ displayError("Sound could not be retrieved.")});
+            
+        }, function(){ displayError("Sound could not be retrieved.")});
+
+        function displayMessage(text,place){
+            document.getElementById(place).innerHTML=text;
+    }
+
+    }
+</script>
+</head>
+<body onload="init()">
+    <p>
+        <div id="resp1"></div>
+
+        <button onclick="loadSound()">Load sound</button>
+        <button onclick="playSound()">Play sound</button>
+    </p>
+</body>
+</html>
