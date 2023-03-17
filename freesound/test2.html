@@ -25,16 +25,22 @@
     return Promise.all(promises);
   }
 
-  async function test() {
+  async function search() {
     //const arrayOfSoundIds = ['1234', '5678', '91011'];
-    const arrayOfSoundIds = await getSounds('dog');
+    const search = document.getElementById('search').value;
+    const arrayOfSound = await getSounds(search);
+
+    const arrayOfSoundIds = arrayOfSound.map(sound => sound[0]);
+    const arrayOfSoundNames = arrayOfSound.map(sound => sound[1]);
 
     const arrayOfAudioBuffers = await getAllSoundsArrayBuffersAsPromises(arrayOfSoundIds);
     // create an html button to play each sound
     const playButtons = document.getElementById('playButtons');
+    playButtons.innerHTML = '';
     arrayOfAudioBuffers.forEach((audioBuffer, index) => {
       const button = document.createElement('button');
-      button.innerHTML = `Play sound ${arrayOfSoundIds[index]}`;
+
+      button.innerHTML = arrayOfSoundNames[index];
       
       // play sound when button is clicked
       button.addEventListener('click', () => {
@@ -52,33 +58,52 @@
       // get ids of each sound
       const response = await fetch(url);
       const data = await response.json();
-      const arrayOfSoundIds = data.results.map(sound => sound.id);
-      return arrayOfSoundIds;
+      const arrayOfSoundIdsAndNames = data.results.map(sound => [sound.id, sound.name]);
+      return arrayOfSoundIdsAndNames;  
     }
   }
 
-  async function suspend() {
-    audioContext.suspend();
-  }
-
-  async function resume() {
-    audioContext.resume();
+  var lec = true;
+  async function lecture() {
+    if (lec) {
+      document.getElementById("buttonLecture").innerHTML = "Resume";
+      lec = false;
+      audioContext.suspend();
+    } else {
+      document.getElementById("buttonLecture").innerHTML = "Suspend";
+      lec = true;
+      audioContext.resume();
+    }
   }
 
   async function reset() {
     audioContext.close();
     newAudioContext = new AudioContext();
     audioContext = newAudioContext;
+    lec = true;
+    document.getElementById("buttonLecture").innerHTML = "Suspend";
   }
 
 </script>
-<html>
-  <button onclick="test()">Test</button>
-  <button onclick="suspend();">Suspend</button>
-  <button onclick="resume();">Resume</button>
-  <button onclick="reset();">Reset</button>
 
-<div id="playButtons">
-</div>
+<html>
+  <head>
+    <title>stageQuentin</title>
+  </head>
+  <body>
+    <h1>stageQuentin</h1>
+    
+    <input type="text" id="search" name="search" placeholder="Search">
+    
+
+    <button id="buttonSearch" onclick="search()">Search</button>
+    <button id="buttonLecture" onclick="lecture();">Suspend</button>
+    <button id="reset" onclick="reset();">Reset</button>
+
+    <div id="playButtons">
+
+    </div>
+
+  </body>
 
 </html>
