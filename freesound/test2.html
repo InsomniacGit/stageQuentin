@@ -2,7 +2,8 @@
   // Set API endpoint and parameters
   const apiUrl = 'https://freesound.org/apiv2';
   const apiKey = 'gWrbi0mUOoh7gaZgxp1Eh5rXB1hZ4UKZ2AnV8nqo';
-  const audioContext = new AudioContext();
+  var audioContext = new AudioContext();
+  var newAudioContext;
 
   async function getSoundAsArrayBuffer(id) {
     const url = `${apiUrl}/sounds/${id}/?token=${apiKey}`;
@@ -56,9 +57,27 @@
     }
   }
 
+  async function suspend() {
+    audioContext.suspend();
+  }
+
+  async function resume() {
+    audioContext.resume();
+  }
+
+  async function reset() {
+    audioContext.close();
+    newAudioContext = new AudioContext();
+    audioContext = newAudioContext;
+  }
+
 </script>
 <html>
   <button onclick="test()">Test</button>
+  <button onclick="suspend();">Suspend</button>
+  <button onclick="resume();">Resume</button>
+  <button onclick="reset();">Reset</button>
+
 <div id="playButtons">
 </div>
 
