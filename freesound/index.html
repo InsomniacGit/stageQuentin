@@ -1,53 +1,48 @@
 <html>
-    <head>
-        <title>Loading a sound from freesound</title>
-        <script src="freesound.js"></script>
-<script>
-    function init() {
-        // initialize freesound API key
-        freesound.setToken("gWrbi0mUOoh7gaZgxp1Eh5rXB1hZ4UKZ2AnV8nqo");
-        // load sound with id=1234
-        freesound.getSound(1234, function(sound) {
-            // display sound info
-            var msg = "";
-            msg = "<h3>Getting info of sound: " + sound.name + "</h3>";
-            msg += "<strong>Url:</strong> " + sound.url + "<br>";
-            msg += "<strong>Description:</strong> " + sound.description + "<br>";
-            msg += "<strong>Tags:</strong><ul>";
-            for (i in sound.tags){
-                msg += "<li>" + sound.tags[i] + "</li>";
-            }
-            msg += "</ul><br>";
-            msg += "<img src='" + sound.images.waveform_l + "'>";
-            snd = new Audio(sound.previews['preview-hq-mp3']);
-            msg += '<br><button onclick="snd.play()">play</button><button onclick="snd.pause()">pause</button><br><br>';
-            displayMessage(msg,'resp1');
+  <head>
+    <link rel="stylesheet" href="./style.css">
+    <script src="./search.js"></script>
 
-            // decode full length snd with webaudio api and play it
-            sound.getAudioBuffer(function(buffer) {
-                var context = new AudioContext();
-                var source = context.createBufferSource();
-                source.buffer = buffer;
-                source.connect(context.destination);
-                // pkay it
-                source.start(0);
-            }, function(){ displayError("Sound could not be retrieved.")});
-            
-        }, function(){ displayError("Sound could not be retrieved.")});
+    <title>stageQuentin</title>
+  </head>
+  
+  <body>
+    <h1>stageQuentin</h1>
+    
+    <input type="text" id="search" name="search" placeholder="Search">
+    
 
-        function displayMessage(text,place){
-            document.getElementById(place).innerHTML=text;
-    }
+    <button id="buttonSearch" onclick="search()">Search</button>
+    <button id="buttonLecture" onclick="lecture();">Suspend</button>
+    <button id="reset" onclick="reset();">Reset</button>
 
-    }
-</script>
-</head>
-<body onload="init()">
-    <p>
-        <div id="resp1"></div>
+    <!-- Ajoute un progress -->
+    <progress id="progressBar" value="0" max="100"></progress>
 
-        <button onclick="loadSound()">Load sound</button>
-        <button onclick="playSound()">Play sound</button>
-    </p>
-</body>
+    <div id="playButtons">
+
+    </div>
+
+    <div class="sampler">
+      <button class="pad" id="1"></button>
+      <button class="pad" id="2"></button>
+      <button class="pad" id="3"></button>
+      <button class="pad" id="4"></button>
+      <button class="pad" id="5"></button>
+      <button class="pad" id="6"></button>
+      <button class="pad" id="7"></button>
+      <button class="pad" id="8"></button>
+      <button class="pad" id="9"></button>
+      <button class="pad" id="10"></button>
+      <button class="pad" id="11"></button>
+      <button class="pad" id="12"></button>
+      <button class="pad" id="13"></button>
+      <button class="pad" id="14"></button>
+      <button class="pad" id="15"></button>
+      <button class="pad" id="16"></button>
+    </div>
+
+  </body>
+  
+
 </html>

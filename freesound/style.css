@@ -1,0 +1,37 @@
+/* Styling for the pads */
+.pad {
+width: 100px;
+height: 100px;
+border: 2px solid #333;
+background-color: #eee;
+font-size: 24px;
+display: flex;
+justify-content: center;
+align-items: center;
+}
+
+
+/* Styling for the pads when they are active */
+.active {
+background-color: #ff0;
+border: 2px solid #f00;
+}
+
+.sampler {
+margin-top: 50px;
+margin-left: 50px;
+display: grid;
+grid-template-columns: repeat(4, 1fr);
+grid-gap: 10px;
+width: 430px;
+}
+
+/* Styling the progress bar for the id=progressBar */
+#progressBar {
+display: none;
+}
+
+#playButtons {
+margin-top: 10px;
+}
+
