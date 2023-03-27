@@ -1,48 +1,89 @@
 <html>
-  <head>
-    <link rel="stylesheet" href="./style.css">
-    <script src="./search.js"></script>
 
-    <title>stageQuentin</title>
-  </head>
-  
-  <body>
-    <h1>stageQuentin</h1>
-    
-    <input type="text" id="search" name="search" placeholder="Search">
-    
+<head>
+  <link rel="stylesheet" href="./style.css">
+  <script type ="module" src="./search.js"></script>
 
-    <button id="buttonSearch" onclick="search()">Search</button>
-    <button id="buttonLecture" onclick="lecture();">Suspend</button>
-    <button id="reset" onclick="reset();">Reset</button>
+  <title>stageQuentin</title>
+</head>
 
-    <!-- Ajoute un progress -->
-    <progress id="progressBar" value="0" max="100"></progress>
+<body>
+  <h1>stageQuentin</h1>
 
-    <div id="playButtons">
+  <input type="text" id="search" name="search" placeholder="Search">
 
-    </div>
 
-    <div class="sampler">
-      <button class="pad" id="1"></button>
-      <button class="pad" id="2"></button>
-      <button class="pad" id="3"></button>
-      <button class="pad" id="4"></button>
-      <button class="pad" id="5"></button>
-      <button class="pad" id="6"></button>
-      <button class="pad" id="7"></button>
-      <button class="pad" id="8"></button>
-      <button class="pad" id="9"></button>
-      <button class="pad" id="10"></button>
-      <button class="pad" id="11"></button>
-      <button class="pad" id="12"></button>
-      <button class="pad" id="13"></button>
-      <button class="pad" id="14"></button>
-      <button class="pad" id="15"></button>
-      <button class="pad" id="16"></button>
-    </div>
+  <button id="buttonSearch" onclick="search()">Search</button>
+  <button id="buttonLecture" onclick="lecture();">Suspend</button>
+  <button id="reset" onclick="reset();">Reset</button>
 
-  </body>
-  
+  <p> <button id="buttonSearchWithBufferLoader">Search (buffer loader)</button>
+  </p>
+
+  <!-- Ajoute un progress -->
+  <progress id="progressBar" value="0" max="100"></progress>
+
+  <div id="playButtons">
+
+  </div>
+
+  <!--
+  <div class="sampler">
+      <button id="pad0" class="pad">
+      </button>
+      <progress id="progress0" value=0 class="progressSound"></progress>
+
+    <button class="pad" id="pad1"></button>
+    <progress id="progress1" value=0 class="progressSound"></progress>
+
+    <button class="pad" id="pad2"></button>
+    <progress id="progress2" value=0 class="progressSound"></progress>
+
+    <button class="pad" id="pad3"></button>
+    <progress id="progress3" value=0 class="progressSound"></progress>
+
+    <button class="pad" id="pad4"></button>
+    <progress id="progress4" value=0 class="progressSound"></progress>
+
+    <button class="pad" id="pad5"></button>
+    <progress id="progress5" value=0 class="progressSound"></progress>
+
+    <button class="pad" id="pad6"></button>
+    <progress id="progress6" value=0 class="progressSound"></progress>
+
+    <button class="pad" id="pad7"></button>
+    <progress id="progress7" value=0 class="progressSound"></progress>
+
+    <button class="pad" id="pad8"></button>
+    <progress id="progress8" value=0 class="progressSound"></progress>
+
+    <button class="pad" id="pad9"></button>
+    <progress id="progress9" value=0 class="progressSound"></progress>
+
+    <button class="pad" id="pad10"></button>
+    <progress id="progress10" value=0 class="progressSound"></progress>
+
+    <button class="pad" id="pad11"></button>
+    <progress id="progress11" value=0 class="progressSound"></progress>
+
+    <button class="pad" id="pad12"></button>
+    <progress id="progress12" value=0 class="progressSound"></progress>
+
+    <button class="pad" id="pad13"></button>
+    <progress id="progress13" value=0 class="progressSound"></progress>
+
+    <button class="pad" id="pad14"></button>
+    <progress id="progress14" value=0 class="progressSound"></progress>
+
+    <button class="pad" id="pad15"></button>
+    <progress id="progress15" value=0 class="progressSound"></progress>
+
+  </div>
+  -->
+  <div id="matrix"></div>
+
+
+</body>
+
 
 </html>

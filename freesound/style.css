@@ -1,37 +1,72 @@
 /* Styling for the pads */
 .pad {
-width: 100px;
-height: 100px;
-border: 2px solid #333;
-background-color: #eee;
-font-size: 24px;
-display: flex;
-justify-content: center;
-align-items: center;
+    width: 100px;
+    height: 100px;
+    border: 2px solid #333;
+    background-color: #eee;
+    font-size: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: courier;
+    font-size: 10px;
 }
-
 
 /* Styling for the pads when they are active */
 .active {
-background-color: #ff0;
-border: 2px solid #f00;
+    background-color: #ff0;
+    border: 2px solid #f00;
 }
 
 .sampler {
-margin-top: 50px;
-margin-left: 50px;
-display: grid;
-grid-template-columns: repeat(4, 1fr);
-grid-gap: 10px;
-width: 430px;
+    margin-top: 50px;
+    margin-left: 50px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 10px;
+    width: 430px;
 }
 
 /* Styling the progress bar for the id=progressBar */
 #progressBar {
-display: none;
+    display: none;
 }
 
 #playButtons {
-margin-top: 10px;
+    margin-top: 10px;
 }
 
+/* Michel BUFFA */
+#matrix {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: 10px;
+    width: 600px;
+    border: 2px solid;
+    padding: 20px;
+    border-radius: 15px;
+}
+
+.padbutton {
+    width: 100%;
+    height: 50px;
+    font-size: 24px;
+    border: none;
+    background-color: #ccc;
+    color: black;
+    cursor: pointer;
+    font-family: courier;
+    font-size: 10px;
+}
+
+.padactionbutton {
+    font-family: courier;
+    font-size: 8px;
+}
+
+.padprogress {
+    width: 100%;
+    height: 10px;
+}

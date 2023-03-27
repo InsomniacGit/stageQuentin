@@ -1,8 +1,19 @@
+import BufferLoader from './bufferLoader.js';
+import createPadMaxtrix from './matrix.js';
+
 // Set API endpoint and parameters
 const apiUrl = 'https://freesound.org/apiv2';
 const apiKey = 'gWrbi0mUOoh7gaZgxp1Eh5rXB1hZ4UKZ2AnV8nqo';
 var audioContext = new AudioContext();
-var newAudioContext;
+
+window.onload = init;
+
+function init() {
+    createPadMaxtrix();
+    const b = document.querySelector("#buttonSearchWithBufferLoader");
+    b.onclick = testBufferLoader;
+}
+
 
 
 function getSounds(queryText) {
@@ -21,7 +32,7 @@ function getSounds(queryText) {
                     reject(new Error('Failed to get sounds'));
                 }
             }
-        }; 
+        };
         xhr.send();
     });
 }
@@ -69,10 +80,10 @@ function getAllSoundsArrayBuffersAsPromises(arrayOfSoundIds) {
     return promises;
 }
 
-  
-  
+
+
 // Create and display buttons as sounds are loaded
-function displayButtons(arrayOfSoundNames, audioBuffer, index) {       
+function displayButtons(arrayOfSoundNames, audioBuffer, index) {
     const playButtons = document.getElementById('playButtons');
 
     // wait it to be resolved before displaying the button
@@ -108,11 +119,11 @@ function updateProgressBar(percentage) {
     }
 }
 
-  
+
 function search() {
     // Pour reset tout les boutons
     document.getElementById('playButtons').innerHTML = '';
-    
+
     const search = document.getElementById('search').value;
     getSounds(search).then(arrayOfSound => {
 
@@ -135,7 +146,7 @@ function search() {
         });
     });
 }
-  
+
 
 
 
@@ -175,18 +186,85 @@ window.addEventListener("load", () => {
 
 
 
-    // // Add event listeners to each pad
-    // pads.forEach((pad,index) => {
-    //     pad.addEventListener("click", () => {
+// // Add event listeners to each pad
+// pads.forEach((pad,index) => {
+//     pad.addEventListener("click", () => {
 
-    //     // Add the "active" class to the pad
-    //     pad.classList.add("active");
+//     // Add the "active" class to the pad
+//     pad.classList.add("active");
 
-    //     // Remove the "active" class from the pad after a short delay
-    //     setTimeout(() => {
-    //     pad.classList.remove("active");
-    //         }, 100);
-    //     });
-    // });
+//     // Remove the "active" class from the pad after a short delay
+//     setTimeout(() => {
+//     pad.classList.remove("active");
+//         }, 100);
+//     });
+// });
 
 
+let bufferLoader;
+
+function loadAllSoundSamplesWithBufferLoader(ctx, urlsToDownload, finishedLoading, drawTrack) {
+    bufferLoader = new BufferLoader(
+        ctx,
+        urlsToDownload,
+        finishedLoading,
+        drawTrack
+    );
+    bufferLoader.load();
+}
+
+function testBufferLoader() {
+    // Pour reset tout les boutons
+    document.getElementById('playButtons').innerHTML = '';
+
+    const search = document.getElementById('search').value;
+
+    let arrayOfSoundObjectURLs = [];
+
+    getSounds(search).then(arrayOfSoundIds => {
+        arrayOfSoundIds.map((soundObject, index) => {
+            const id = soundObject[0];
+            const urlOfSoundObject = `${apiUrl}/sounds/${id}/?token=${apiKey}`;
+
+            // name
+            const button = document.querySelector(`#pad${index}`);
+            button.textContent = soundObject[1];
+            arrayOfSoundObjectURLs.push(urlOfSoundObject);
+        });
+        
+        // use Promise.all to get all the sound objects
+        Promise.all(arrayOfSoundObjectURLs.map(url => fetch(url)))
+            .then(responses => Promise.all(responses.map(res => res.json())))
+            .then(soundObjects => {
+                // use Promise.all to get all the sound previews as mp3 files
+                const arrayOfSoundPreviews = soundObjects.map(soundObject => soundObject.previews['preview-hq-mp3']);
+                loadAllSoundSamplesWithBufferLoader(audioContext, arrayOfSoundPreviews, allSoundsLoaded, drawSound);
+            });
+    });
+
+
+}
+
+function allSoundsLoaded(bufferList) {
+    console.log("All sounds loaded");
+    
+    bufferList.forEach((audioBuffer, index) => {
+        //console.log(audioBuffer);
+        const button = document.querySelector(`#pad${index}`);
+
+        // Play sound when button is clicked
+        button.addEventListener('click', () => {
+            const source = audioContext.createBufferSource();
+            source.buffer = audioBuffer;
+            source.connect(audioContext.destination);
+            source.start();
+        });
+
+        // Add button to the DOM
+    })
+}
+
+
+function drawSound(decodedBuffer, trackNumber) {
+    console.log("Draw sound : " + trackNumber);
+}
