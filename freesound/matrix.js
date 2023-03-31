@@ -3,7 +3,7 @@ export default function createPadMaxtrix() {
     const matrix = document.getElementById("matrix");
 
     // create a 4x4 matrix of buttons with progress bars
-    for (let i = 0; i < 4; i++) {
+    for (let i = 3; i >= 0; i--) {
         for (let j = 0; j < 4; j++) {
             const button = document.createElement("button");
             button.textContent = `${i},${j}`;

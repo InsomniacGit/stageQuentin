@@ -10,78 +10,26 @@
 <body>
   <h1>stageQuentin</h1>
 
-  <input type="text" id="search" name="search" placeholder="Search">
+  <div id="playButtons"></div>
 
+  <div id="sampler">
+  
+    <div id="matrix"></div>
 
-  <button id="buttonSearch" onclick="search()">Search</button>
-  <button id="buttonLecture" onclick="lecture();">Suspend</button>
-  <button id="reset" onclick="reset();">Reset</button>
+    <div id="parameters">
 
-  <p> <button id="buttonSearchWithBufferLoader">Search (buffer loader)</button>
-  </p>
+      <div id="waveform">
+        <p id="soundName">Waveform</p>
+        <canvas id="canvas"></canvas>
+      </div>
 
-  <!-- Ajoute un progress -->
-  <progress id="progressBar" value="0" max="100"></progress>
-
-  <div id="playButtons">
-
+      <div id="effects">
+        <div id="research"></div> 
+      </div>
+      
+    </div>
+    
   </div>
-
-  <!--
-  <div class="sampler">
-      <button id="pad0" class="pad">
-      </button>
-      <progress id="progress0" value=0 class="progressSound"></progress>
-
-    <button class="pad" id="pad1"></button>
-    <progress id="progress1" value=0 class="progressSound"></progress>
-
-    <button class="pad" id="pad2"></button>
-    <progress id="progress2" value=0 class="progressSound"></progress>
-
-    <button class="pad" id="pad3"></button>
-    <progress id="progress3" value=0 class="progressSound"></progress>
-
-    <button class="pad" id="pad4"></button>
-    <progress id="progress4" value=0 class="progressSound"></progress>
-
-    <button class="pad" id="pad5"></button>
-    <progress id="progress5" value=0 class="progressSound"></progress>
-
-    <button class="pad" id="pad6"></button>
-    <progress id="progress6" value=0 class="progressSound"></progress>
-
-    <button class="pad" id="pad7"></button>
-    <progress id="progress7" value=0 class="progressSound"></progress>
-
-    <button class="pad" id="pad8"></button>
-    <progress id="progress8" value=0 class="progressSound"></progress>
-
-    <button class="pad" id="pad9"></button>
-    <progress id="progress9" value=0 class="progressSound"></progress>
-
-    <button class="pad" id="pad10"></button>
-    <progress id="progress10" value=0 class="progressSound"></progress>
-
-    <button class="pad" id="pad11"></button>
-    <progress id="progress11" value=0 class="progressSound"></progress>
-
-    <button class="pad" id="pad12"></button>
-    <progress id="progress12" value=0 class="progressSound"></progress>
-
-    <button class="pad" id="pad13"></button>
-    <progress id="progress13" value=0 class="progressSound"></progress>
-
-    <button class="pad" id="pad14"></button>
-    <progress id="progress14" value=0 class="progressSound"></progress>
-
-    <button class="pad" id="pad15"></button>
-    <progress id="progress15" value=0 class="progressSound"></progress>
-
-  </div>
-  -->
-  <div id="matrix"></div>
-
 
 </body>
 

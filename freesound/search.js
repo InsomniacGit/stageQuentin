@@ -1,23 +1,90 @@
 import BufferLoader from './bufferLoader.js';
 import createPadMaxtrix from './matrix.js';
+import createWaveform from './waveform.js';
+import createEffects from './effects.js';
 
 // Set API endpoint and parameters
 const apiUrl = 'https://freesound.org/apiv2';
 const apiKey = 'gWrbi0mUOoh7gaZgxp1Eh5rXB1hZ4UKZ2AnV8nqo';
 var audioContext = new AudioContext();
 
+
+// Récupère tout les fichier dans preset1 et les met dans un tableau
+const preset1 = [];
+preset1.push(`audio/preset1/kick.wav`);
+preset1.push(`audio/preset1/snare.wav`);
+preset1.push(`audio/preset1/tom1.wav`);
+preset1.push(`audio/preset1/tom2.wav`);
+preset1.push(`audio/preset1/tom3.wav`);
+preset1.push(`audio/preset1/hihat.wav`);
+
+const preset2 = [];
+preset2.push(`audio/preset2/kick.wav`);
+preset2.push(`audio/preset2/snare.wav`);
+preset2.push(`audio/preset2/tom1.wav`);
+preset2.push(`audio/preset2/tom2.wav`);
+preset2.push(`audio/preset2/tom3.wav`);
+preset2.push(`audio/preset2/hihat.wav`);
+
+
+const presetName = [];
+presetName.push(`kick`);
+presetName.push(`snare`);
+presetName.push(`tom1`);
+presetName.push(`tom2`);
+presetName.push(`tom3`);
+presetName.push(`hihat`);
+
 window.onload = init;
+
+
+
+function loadLocalFiles(preset) {
+    matrix.innerHTML = '';
+    createPadMaxtrix();
+
+    bufferLoader = new BufferLoader(audioContext, preset, allSoundsLoaded, drawSound);
+    bufferLoader.load();
+
+    for (let i = 0; i < preset1.length; i++) {
+        const button = document.querySelector(`#pad${i}`);
+        button.textContent = presetName[i];
+    }
+}
 
 function init() {
     createPadMaxtrix();
-    const b = document.querySelector("#buttonSearchWithBufferLoader");
-    b.onclick = testBufferLoader;
+    createWaveform();
+    createEffects();
+
+    const matrix = document.getElementById("matrix");
+
+    const search = document.getElementById('search');
+    const searchButton = document.getElementById('buttonSearchWithBufferLoader');
+    searchButton.onclick = testBufferLoader;
+
+    const select = document.getElementById('selectPreset');
+    select.onchange = (event) => {
+        if (event.target.value === 'preset1') {
+            loadLocalFiles(preset1);
+            search.style.display = 'none';
+            searchButton.style.display = 'none';
+        } else if (event.target.value === 'preset2') {
+            loadLocalFiles(preset2);
+            search.style.display = 'none';
+            searchButton.style.display = 'none';
+        } else if (event.target.value === 'create') {
+            testBufferLoader();
+            search.style.display = 'inline-block';
+            searchButton.style.display = 'inline-block';
+        }
+    };
+    
 }
 
 
-
 function getSounds(queryText) {
-    const url = `${apiUrl}/search/text/?query=${queryText}&token=${apiKey}`;
+    const url = `${apiUrl}/search/text/?query=${queryText}&token=${apiKey}&page_size=${16}`;
     const xhr = new XMLHttpRequest();
     xhr.open('GET', url);
     xhr.responseType = 'json';
@@ -38,168 +105,6 @@ function getSounds(queryText) {
 }
 
 
-function getAllSoundsArrayBuffersAsPromises(arrayOfSoundIds) {
-    const promises = arrayOfSoundIds.map(id => {
-        return new Promise((resolve, reject) => {
-            const url = `${apiUrl}/sounds/${id}/?token=${apiKey}`;
-            const xhr = new XMLHttpRequest();
-            xhr.open('GET', url, true);
-            xhr.responseType = 'json';
-            xhr.onload = function () {
-                if (xhr.status === 200) {
-                    const data = xhr.response;
-                    const previewUrl = data.previews['preview-hq-mp3'];
-
-                    const xhr2 = new XMLHttpRequest();
-                    xhr2.open('GET', previewUrl, true);
-                    xhr2.responseType = 'arraybuffer';
-                    xhr2.onload = function () {
-                        if (xhr2.status === 200) {
-                            const arrayBuffer = xhr2.response;
-                            audioContext.decodeAudioData(arrayBuffer, function (audioBuffer) {
-                                resolve(audioBuffer);
-                            });
-                        } else {
-                            reject(new Error(`Request failed with status ${xhr2.status}`));
-                        }
-                    };
-                    xhr2.onerror = function () {
-                        reject(new Error('Network error'));
-                    };
-                    xhr2.send();
-                } else {
-                    reject(new Error(`Request failed with status ${xhr.status}`));
-                }
-            };
-            xhr.onerror = function () {
-                reject(new Error('Network error'));
-            };
-            xhr.send();
-        });
-    });
-    return promises;
-}
-
-
-
-// Create and display buttons as sounds are loaded
-function displayButtons(arrayOfSoundNames, audioBuffer, index) {
-    const playButtons = document.getElementById('playButtons');
-
-    // wait it to be resolved before displaying the button
-    audioBuffer.then((audioBuffer) => {
-        console.log(audioBuffer);
-        const button = document.createElement('button');
-        button.innerHTML = arrayOfSoundNames[index];
-
-        // Play sound when button is clicked
-        button.addEventListener('click', () => {
-            const source = audioContext.createBufferSource();
-            source.buffer = audioBuffer;
-            source.connect(audioContext.destination);
-            source.start();
-        });
-
-        // Add button to the DOM
-        playButtons.appendChild(button);
-    });
-}
-
-
-// Update progress bar, in blue color the loaded part and grey the rest
-function updateProgressBar(percentage) {
-    const progressBar = document.getElementById('progressBar');
-    progressBar.value = percentage;
-
-    // Si la value vaut 0 ou 100 cacher la progress bar
-    if (percentage == 0 || percentage == 100) {
-        progressBar.style.display = "none";
-    } else {
-        progressBar.style.display = "inline-block";
-    }
-}
-
-
-function search() {
-    // Pour reset tout les boutons
-    document.getElementById('playButtons').innerHTML = '';
-
-    const search = document.getElementById('search').value;
-    getSounds(search).then(arrayOfSound => {
-
-        const arrayOfSoundIds = arrayOfSound.map(sound => sound[0]);
-        const arrayOfSoundNames = arrayOfSound.map(sound => sound[1]);
-
-        // Get a list of sounds as promises
-        const arrayOfPromises = getAllSoundsArrayBuffersAsPromises(arrayOfSoundIds);
-
-        // Create and display buttons as sounds are loaded
-        let loadedSounds = 0;
-        arrayOfPromises.forEach((promise, index) => {
-            promise.then(audioBuffer => {
-                loadedSounds++;
-                displayButtons(arrayOfSoundNames, promise, index);
-                updateProgressBar(loadedSounds / arrayOfPromises.length * 100);
-            }).catch(error => {
-                console.log(error);
-            });
-        });
-    });
-}
-
-
-
-
-var lec = true;
-
-function lecture() {
-    if (lec) {
-        document.getElementById("buttonLecture").innerHTML = "Resume";
-        lec = false;
-        audioContext.suspend();
-    } else {
-        document.getElementById("buttonLecture").innerHTML = "Suspend";
-        lec = true;
-        audioContext.resume();
-    }
-}
-
-function reset() {
-    audioContext.close();
-    newAudioContext = new AudioContext();
-    audioContext = newAudioContext;
-    lec = true;
-    document.getElementById("buttonLecture").innerHTML = "Suspend";
-}
-
-
-
-// Get all the pads
-var pads;
-
-window.addEventListener("load", () => {
-    pads = document.querySelectorAll(".pad");
-});
-
-
-
-
-
-
-// // Add event listeners to each pad
-// pads.forEach((pad,index) => {
-//     pad.addEventListener("click", () => {
-
-//     // Add the "active" class to the pad
-//     pad.classList.add("active");
-
-//     // Remove the "active" class from the pad after a short delay
-//     setTimeout(() => {
-//     pad.classList.remove("active");
-//         }, 100);
-//     });
-// });
-
 
 let bufferLoader;
 
@@ -215,7 +120,8 @@ function loadAllSoundSamplesWithBufferLoader(ctx, urlsToDownload, finishedLoadin
 
 function testBufferLoader() {
     // Pour reset tout les boutons
-    document.getElementById('playButtons').innerHTML = '';
+    matrix.innerHTML = '';
+    createPadMaxtrix();
 
     const search = document.getElementById('search').value;
 
@@ -238,15 +144,15 @@ function testBufferLoader() {
             .then(soundObjects => {
                 // use Promise.all to get all the sound previews as mp3 files
                 const arrayOfSoundPreviews = soundObjects.map(soundObject => soundObject.previews['preview-hq-mp3']);
+                // console.log(arrayOfSoundPreviews);
                 loadAllSoundSamplesWithBufferLoader(audioContext, arrayOfSoundPreviews, allSoundsLoaded, drawSound);
             });
     });
 
-
 }
 
 function allSoundsLoaded(bufferList) {
-    console.log("All sounds loaded");
+    // console.log("All sounds loaded");
     
     bufferList.forEach((audioBuffer, index) => {
         //console.log(audioBuffer);
@@ -266,5 +172,5 @@ function allSoundsLoaded(bufferList) {
 
 
 function drawSound(decodedBuffer, trackNumber) {
-    console.log("Draw sound : " + trackNumber);
+    // console.log("Draw sound : " + trackNumber);
 }
