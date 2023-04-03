@@ -86,3 +86,11 @@
     width: 100%;
     height: 10px;
 }
+
+.set {
+    background-color: lightgreen;
+}
+
+.active {
+    background-color: red;
+}

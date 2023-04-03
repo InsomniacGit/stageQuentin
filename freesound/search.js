@@ -78,6 +78,10 @@ function init() {
             search.style.display = 'inline-block';
             searchButton.style.display = 'inline-block';
         }
+
+        // Empeche que lorsque l'on choisi un preset et que l'on appuie sur set nous retournons sur create
+        select.disabled = true;
+        select.disabled = false;
     };
     
 }
@@ -166,6 +170,8 @@ function allSoundsLoaded(bufferList) {
             source.start();
         });
 
+        button.classList.add('set');
+
         // Add button to the DOM
     })
 }
@@ -174,3 +180,79 @@ function allSoundsLoaded(bufferList) {
 function drawSound(decodedBuffer, trackNumber) {
     // console.log("Draw sound : " + trackNumber);
 }
+
+
+
+// function that detects a keybord press
+document.addEventListener('keydown', (event) => {
+    const keyName = event.key;
+    //console.log(keyName);
+
+    switch (keyName) {
+        case '1':
+        case '&':
+            document.querySelector('#pad12').click();
+            break;
+        case '2':
+        case 'é':
+            document.querySelector('#pad13').click();
+            break;
+        case '3':
+        case '"':
+            document.querySelector('#pad14').click();
+            break;
+        case '4':
+        case "'":
+            document.querySelector('#pad15').click();
+            break;
+        case 'A':
+        case 'a':
+            document.querySelector('#pad8').click();
+            break;
+        case 'Z':
+        case 'z':
+            document.querySelector('#pad9').click();
+            break;
+        case 'E':
+        case 'e':
+            document.querySelector('#pad10').click();
+            break;
+        case 'R':
+        case 'r':
+            document.querySelector('#pad11').click();
+            break;
+        case 'Q':
+        case 'q':
+            document.querySelector('#pad4').click();
+            break;
+        case 'S':
+        case 's':
+            document.querySelector('#pad5').click();
+            break;
+        case 'D':
+        case 'd':
+            document.querySelector('#pad6').click();
+            break;
+        case 'F':
+        case 'f':
+            document.querySelector('#pad7').click();
+            break;
+        case 'W':
+        case 'w':
+            document.querySelector('#pad0').click();
+            break;
+        case 'X':
+        case 'x':
+            document.querySelector('#pad1').click();
+            break;
+        case 'C':
+        case 'c':
+            document.querySelector('#pad2').click();
+            break;
+        case 'V':
+        case 'v':
+            document.querySelector('#pad3').click();
+            break;
+    }
+
+});
