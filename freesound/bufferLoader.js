@@ -9,7 +9,7 @@ function BufferLoader(context, urlList, callback, callbackDraw) {
 
 BufferLoader.prototype.loadBuffer = function(url, index) {
     // Load buffer asynchronously
-    console.log('file : ' + url + "loading and decoding");
+    // console.log('file : ' + url + "loading and decoding");
 
     var request = new XMLHttpRequest();
     request.open("GET", url, true);
@@ -24,8 +24,8 @@ BufferLoader.prototype.loadBuffer = function(url, index) {
         loader.context.decodeAudioData(
                 request.response,
                 function(buffer) {
-                        console.log("Loaded and decoded track " + (loader.loadCount+1) + 
-                        "/" +  loader.urlList.length + "...");
+                        // console.log("Loaded and decoded track " + (loader.loadCount+1) + 
+                        // "/" +  loader.urlList.length + "...");
 
                     if (!buffer) {
                         alert('error decoding file data: ' + url);
@@ -71,8 +71,8 @@ BufferLoader.prototype.load = function() {
     this.bufferList = [];
     this.loadCount = 0;
     //clearLog();
-    console.log("Loading tracks... please wait...");
-    console.log("BufferLoader.prototype.load urlList size = " + this.urlList.length);
+    // console.log("Loading tracks... please wait...");
+    // console.log("BufferLoader.prototype.load urlList size = " + this.urlList.length);
     for (var i = 0; i < this.urlList.length; ++i)
         this.loadBuffer(this.urlList[i], i);
 }
