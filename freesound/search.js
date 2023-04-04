@@ -237,8 +237,9 @@ function testBufferLoader() {
             .then(responses => Promise.all(responses.map(res => res.json())))
             .then(soundObjects => {
                 // use Promise.all to get all the sound previews as mp3 files
-                const arrayOfSoundPreviews = soundObjects.map(soundObject => soundObject.previews['preview-hq-mp3']);
-                loadAllSoundSamplesWithBufferLoader(audioContext, arrayOfSoundPreviews, allSoundsLoaded, drawSound);
+                const arrayOfSoundPreviewsURLs = soundObjects.map(soundObject => soundObject.previews['preview-hq-mp3']);
+                console.log(" ### " + arrayOfSoundPreviewsURLs)
+                loadAllSoundSamplesWithBufferLoader(audioContext, arrayOfSoundPreviewsURLs, allSoundsLoaded, drawSound);
             });
     });
 
