@@ -1,12 +1,19 @@
 import BufferLoader from './bufferLoader.js';
 import createPadMaxtrix from './matrix.js';
-import createWaveform from './waveform.js';
+//import createWaveform from './waveform.js';
 import createEffects from './effects.js';
+import SamplePlayer from "./SamplePlayer.js";
 
 // Set API endpoint and parameters
 const apiUrl = 'https://freesound.org/apiv2';
 const apiKey = 'gWrbi0mUOoh7gaZgxp1Eh5rXB1hZ4UKZ2AnV8nqo';
-var audioContext = new AudioContext();
+let audioContext = new AudioContext();
+let canvas, canvasOverlay;
+let ctxCanvasOverlay;
+
+let currentPlayer = undefined;
+let mousePos = { x: 0, y: 0 };
+
 
 
 // Récupère tout les fichier dans preset1 et les met dans un tableau
@@ -17,6 +24,15 @@ preset1.push(`audio/preset1/tom1.wav`);
 preset1.push(`audio/preset1/tom2.wav`);
 preset1.push(`audio/preset1/tom3.wav`);
 preset1.push(`audio/preset1/hihat.wav`);
+
+const presetName1 = [];
+
+function getNamePreset(preset, presetName) { 
+    preset.forEach((chemin) => {
+        let name = chemin.substring(chemin.lastIndexOf('/') + 1);
+        presetName.push(name);
+    });
+}
 
 const preset2 = [];
 preset2.push(`audio/preset2/kick.wav`);
@@ -37,24 +53,9 @@ presetName.push(`hihat`);
 
 window.onload = init;
 
-
-
-function loadLocalFiles(preset) {
-    matrix.innerHTML = '';
-    createPadMaxtrix();
-
-    bufferLoader = new BufferLoader(audioContext, preset, allSoundsLoaded, drawSound);
-    bufferLoader.load();
-
-    for (let i = 0; i < preset1.length; i++) {
-        const button = document.querySelector(`#pad${i}`);
-        button.textContent = presetName[i];
-    }
-}
-
 function init() {
     createPadMaxtrix();
-    createWaveform();
+    //createWaveform();
     createEffects();
 
     const matrix = document.getElementById("matrix");
@@ -83,7 +84,54 @@ function init() {
         select.disabled = true;
         select.disabled = false;
     };
-    
+
+
+    canvas = document.querySelector('#myCanvas');
+    canvasOverlay = document.querySelector('#myCanvasOverlay');
+    ctxCanvasOverlay = canvasOverlay.getContext("2d");
+
+    canvasOverlay.onmousemove = (evt) => {
+        let rect = canvas.getBoundingClientRect();
+
+        mousePos.x = (evt.clientX - rect.left);
+        mousePos.y = (evt.clientY - rect.top);
+
+        if (currentPlayer) {
+            currentPlayer.highLightTrimBarsWhenClose(mousePos);
+        }
+    }
+
+    canvasOverlay.onmousedown = (evt) => {
+        if(currentPlayer) {
+            currentPlayer.selectTrimbars();
+        }
+      }
+      
+      canvasOverlay.onmouseup = (evt) => {
+        if(currentPlayer) {
+            currentPlayer.releaseTrimBars();
+        }
+        currentPlayer.releaseTrimBars();
+      }
+
+    requestAnimationFrame(animate);
+}
+
+
+function loadLocalFiles(preset) {
+    matrix.innerHTML = '';
+    createPadMaxtrix();
+
+    bufferLoader = new BufferLoader(audioContext, preset, allSoundsLoaded);
+    bufferLoader.load();
+
+
+    // Display the name of the sounds of the preset
+    getNamePreset(preset1, presetName1);
+    for (let i = 0; i < preset1.length; i++) {
+        const button = document.querySelector(`#pad${i}`);
+        button.textContent = presetName1[i];
+    }
 }
 
 
@@ -162,12 +210,14 @@ function allSoundsLoaded(bufferList) {
         //console.log(audioBuffer);
         const button = document.querySelector(`#pad${index}`);
 
+
+        const player = new SamplePlayer(audioContext, canvas, canvasOverlay,"#83E83E", audioBuffer);
+
         // Play sound when button is clicked
         button.addEventListener('click', () => {
-            const source = audioContext.createBufferSource();
-            source.buffer = audioBuffer;
-            source.connect(audioContext.destination);
-            source.start();
+            currentPlayer = player;
+            player.drawWaveform();
+            player.play();
         });
 
         button.classList.add('set');
@@ -176,6 +226,12 @@ function allSoundsLoaded(bufferList) {
     })
 }
 
+function animate(){
+    if (currentPlayer) 
+        currentPlayer.drawOverlays();
+
+    requestAnimationFrame(animate);
+}
 
 function drawSound(decodedBuffer, trackNumber) {
     // console.log("Draw sound : " + trackNumber);

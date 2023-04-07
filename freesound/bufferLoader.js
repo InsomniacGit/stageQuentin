@@ -1,10 +1,9 @@
-function BufferLoader(context, urlList, callback, callbackDraw) {
+function BufferLoader(context, urlList, callback) {
     this.context = context;
     this.urlList = urlList;
     this.onload = callback;
     this.bufferList = [];
     this.loadCount = 0;
-    this.drawSample = callbackDraw;
 }
 
 BufferLoader.prototype.loadBuffer = function(url, index) {
@@ -32,9 +31,6 @@ BufferLoader.prototype.loadBuffer = function(url, index) {
                         return;
                     }
                     loader.bufferList[index] = buffer;
-
-                    // Let's draw this decoded sample
-                    loader.drawSample(buffer, index);
 
                     //console.log("In bufferLoader.onload bufferList size is " + loader.bufferList.length + " index =" + index);
                     if (++loader.loadCount == loader.urlList.length)

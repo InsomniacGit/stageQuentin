@@ -65,6 +65,7 @@ function addSamplePlayer(url, color) {
             // get substring after last slash
             let name = url.substring(url.lastIndexOf("/") + 1);
             button.innerHTML = "Play " + name;
+            //click listener for buttons
             button.onclick = () => {
                 button.style.backgroundColor = "green";
                 setTimeout(() => {
